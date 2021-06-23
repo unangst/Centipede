@@ -1,0 +1,112 @@
+//Coded by Angelo Regec and Eric Unangst (Contact via Twitter @Unangst.)
+//Summary: A simple to use, easy to modify version of Centipede we use to quickly enterprise enroll new Chromebooks.
+//When running, this code takes about 3:10 to automatically onboard one device.  (1:40 or as little as 1:04 is the 'wait time' to check for Chrome updates.)
+//Inspiration - http://labs.amplifiedit.com/centipede  (We shifted away from this code as it's 30+ versions behind.
+
+//Coded to run on Arduino Pro Micros.
+//Known working on HP 11A G8 EE Chromebooks. 6/21/21.
+//Known working on Chrome OS v.88. 6/22/21.
+
+//Save a copy of this text file as... Chromebook_v88.ino... and head on over to your Ardunio editor of choice... (https://www.arduino.cc/en/software).
+//**IMPORTANT** Before pushing code out, go to Tools -> Board: and make sure it is select your Arduino version (we use Arduino Micros). 
+//Additionally, make sure that the COM port that you selected is the one that the Arduino is actually connected to. =) **IMPORTANT** 
+
+//To make this code work, you'll need to update the code below in four places with the following info:
+//1. Your SSID
+//2. Your wifi password 
+//3. The email address you use for setup
+//4. The password you use for this setup
+
+#include <Keyboard.h> //necessary for keyboard functionality
+#define KEY_TAB         0xB3 //these specify the data values of the keys used and define them to be used in the keyboar.write() and keyboard.press() functions
+#define KEY_ENTER       0xB0
+#define KEY_DOWN_ARROW  0xD9
+#define KEY_RIGHT_CTRL  0x84
+#define KEY_LEFT_ALT    0x82
+
+/*Keyboard.write() presses a button/key and releases it like you were typing on a keyboard
+ *Keyboard.press() presses and holds a button/key and Keyboard.releaseAll() releases the button/key
+ *Keyboard.print() enters the string of your choosing. make sure you use "
+ *wait() is a function found at the bottom of the code. necessary for wait() to work
+ */
+
+void setup() {
+  // put your setup code here, to run once:
+  Keyboard.begin(); // starts keyboard
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  wait(2); //buffer time for code to begin
+  Keyboard.write(KEY_ENTER); //final command on welcome screen.
+  wait(3);// waiting for wifi networks to load
+  Keyboard.write(KEY_TAB);
+  wait(.5); 
+  //If you have multiple SSID's you may need to add/remove some KEY_DOWN_ARROW lines below to select your preferred wifi SSID.
+  Keyboard.write(KEY_DOWN_ARROW); 
+  Keyboard.write(KEY_DOWN_ARROW);  
+  Keyboard.write(KEY_DOWN_ARROW); 
+  Keyboard.write(KEY_DOWN_ARROW);
+  Keyboard.write(KEY_DOWN_ARROW);
+  Keyboard.write(KEY_DOWN_ARROW);  
+  Keyboard.write(KEY_DOWN_ARROW); 
+  wait(1);
+  Keyboard.write(KEY_ENTER);
+  wait(1);
+  // *************************** put your wifi SSID here (ie, "WO-Int"):
+  Keyboard.print("YOUR_SSID");
+  wait(1);
+  Keyboard.write(KEY_TAB);
+  Keyboard.write(KEY_ENTER);
+  wait(1);
+  Keyboard.write(KEY_DOWN_ARROW);  
+  Keyboard.write(KEY_DOWN_ARROW);
+  wait(1);
+  Keyboard.write(KEY_ENTER);
+  wait(1);
+  Keyboard.write(KEY_TAB);
+  wait(1);
+  // *************************** put your wifi password here:
+  Keyboard.print("YOUR_PASSWORD");
+  wait(1);
+  Keyboard.write(KEY_TAB);
+  Keyboard.write(KEY_TAB);
+  Keyboard.write(KEY_TAB);
+  wait(1);
+  Keyboard.write(KEY_ENTER);
+  wait(4); // this is necessary for waiting for wifi to connect. too soon will disrupt the process.
+  Keyboard.write(KEY_TAB);
+  Keyboard.write(KEY_TAB);
+  wait(1.5);
+  Keyboard.write(KEY_ENTER);
+  wait(6); //During this wait, you will have to manually click the checkbox for the terms of service. It would take about a billion TAB's otherwise. This wait also factors in the potential update time. Adjust as needed.
+  Keyboard.press(KEY_LEFT_CTRL);
+  wait(.1);
+  Keyboard.press(KEY_LEFT_ALT);
+  wait(.1);
+  Keyboard.press('e');
+  wait(.5); //keyboard.press() is necessary as it acts as if keys are being held down. Keyboard.releaseAll() releases keys. This is the keybind for enterprise enrollment
+  Keyboard.releaseAll();
+  wait(4);
+  // *************************** put your setup email for enterprise enrollment here:
+  Keyboard.print("SETUPEMAIL@YOURDOMAIN.COM"); //if account is disabled in the future, change username and password to whichever you are using
+  wait(1);
+  Keyboard.write(KEY_TAB);
+  Keyboard.write(KEY_TAB);
+  wait(1);
+  Keyboard.write(KEY_ENTER);
+  wait(3);
+  // *************************** put your password for your enterprise enrollment email account here:
+  Keyboard.print("12345678");
+  Keyboard.write(KEY_TAB);
+  Keyboard.write(KEY_TAB);
+  wait(1);
+  Keyboard.write(KEY_ENTER);
+  wait(3); //process should be complete after this. **IMPORTANT** If it throws a CAPTCHA, disconnect arduino and retype password and CAPTCHA code manually. **IMPORTANT** 
+}
+
+void wait(int cycles) {
+  for (int i = 0; i < cycles; i++) {
+    delay(cycles * 1000); //the delay function operates in milliseconds and multiplying the integer cycles by 1000 converts it to seconds.
+  }
+}
