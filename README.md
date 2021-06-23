@@ -13,4 +13,4 @@ Known working on Chrome OS v.88. 6/22/21.
 
 Enjoy!
 
-Coded by Angelo Regec and Eric Unangst (Twitter @Unangst.)
+Coded by Angelo Regec and Eric Unangst (Twitter @Unangst.) 
